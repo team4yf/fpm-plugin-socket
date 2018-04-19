@@ -3,3 +3,8 @@
 Feature
 
 - Socket Server 
+
+Bugs
+
+- Change `localhost` to `0.0.0.0`
+- Add output Offline Client Id

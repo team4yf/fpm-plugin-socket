@@ -12,14 +12,18 @@ const deviceOnline = (client, message) => {
 
 const deviceOffline = (client) => {
   if(client.id){
-    delete clients[ client.id ]  
+    if(!_.has(clients, client.id)){
+      return
+    }
+    console.log('Offline! Client: ', client.id)
+    delete clients[ client.id ]   
   }else{
     console.log('No Client Id')
   }
 }
 
 const sendData = (client, data) => {
-  client.write(JSON.stringify(data));
+  client.write(JSON.stringify(data))
 }
 
 SERVER.on('connection', (client) =>{  
@@ -66,17 +70,22 @@ export default {
     fpm.registerAction('BEFORE_SERVER_START', () => {
       const config = fpm.getConfig('socket') || {
         port: 10000,
-        host: '127.0.0.1'
+        host: '0.0.0.0'
       }
-      const HOST = config.host || 'localhost'
+      const HOST = config.host || '0.0.0.0'
       const PORT = config.port || 10000
-      SERVER.listen(PORT, HOST)
+      SERVER.listen(PORT, HOST, () => {
+        console.log('opened server on', SERVER.address());
+      })
       // fpm._socketServer = SERVER
       // fpm._socketClients = clientList
 
       
       setInterval(function(){
-        console.log('Clients:', _.keys(clients))
+        if(_.size(clients)<1){
+          return
+        }
+        // console.log('Clients:', _.keys(clients))
         const NOW = _.now()
         _.map(clients, (item) => {
           let data = {
