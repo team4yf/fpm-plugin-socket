@@ -1,38 +1,60 @@
 "use strict";
 import _ from 'lodash'
-import IO from 'koa-socket'
+import net from 'net'
+
+const HOST = 'localhost'
+const PORT = 10000
+
+const SERVER = net.createServer()
+let clientList = []
+
+
+SERVER.on('connection', (client) =>{  
+  client.name = client.remoteAddress + ':' + client.remotePort;  
+  console.log('connect request from ' + client.name)  
+
+  client.setTimeout(5000 * 1000);  
+
+  client.write('Hi!\n');  
+  clientList.push(client);  
+
+  client.on('data', function(data){  
+    console.log(data.toString());
+      // broadcast(data, client);  
+  });  
+
+  client.on('end', function(){  
+      clientList.splice(clientList.indexOf(client), 1);  
+  });  
+
+  client.on('close', function() {  
+      console.log('close:' + client.name);  
+  });  
+
+  client.on('timeout',function(){  
+      client.end();  
+  })  
+
+  client.on('error', function(error) {  
+    
+      console.log('onError', error);  
+  });  
+})
 
 export default {
   bind: (fpm) => {
-    const io = new IO()
-    io.attach( fpm.app )
-    const _io = fpm.app.io
+    SERVER.listen(PORT, HOST)
     fpm.registerAction('BEFORE_SERVER_START', () => {
-      _io.on( 'connection', ctx => {
-        fpm.publish('socketio.connection', {id: ctx.socket.id, data: ctx.data})
-      } )
-      _io.on( 'message', ctx => {
-        _io.broadcast('message', ctx.data)
-        fpm.publish('socketio.message', ctx.data)
-      } )
-      _io.on( 'login', ctx => {
-        ctx.data.channel = 'online'
-        _io.broadcast('message', ctx.data)
-        fpm.publish('socketio.login', ctx.data)
-      } )
-    })
+      fpm._socketServer = SERVER
+      fpm._socketClients = clientList
 
-    fpm.registerAction('BEFORE_MODULES_ADDED', (args) => {
-      let biz = args[0]
-      biz.m = _.assign(biz.m, {
-        websocket: {
-          broadcast: (arg) =>{
-            _io.broadcast('message', arg)
-            return {data: 1}
-          }
-        }
-      })
       
+      setInterval(function(){
+        console.log(clientList.length);
+        clientList.map((item) => {
+          item.write('Hi!\n' + _.now());
+        })
+      }, 10000);
     })
   }
 }
