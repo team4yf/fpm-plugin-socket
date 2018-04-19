@@ -2,59 +2,90 @@
 import _ from 'lodash'
 import net from 'net'
 
-const HOST = 'localhost'
-const PORT = 10000
-
 const SERVER = net.createServer()
-let clientList = []
+let clients = {}
 
+const deviceOnline = (client, message) => {
+  client.id = message.id
+  clients[ message.id ] = client
+}
+
+const deviceOffline = (client) => {
+  if(client.id){
+    delete clients[ client.id ]  
+  }else{
+    console.log('No Client Id')
+  }
+}
+
+const sendData = (client, data) => {
+  client.write(JSON.stringify(data));
+}
 
 SERVER.on('connection', (client) =>{  
-  client.name = client.remoteAddress + ':' + client.remotePort;  
-  console.log('connect request from ' + client.name)  
+  client.name = client.remoteAddress + ':' + client.remotePort
 
-  client.setTimeout(5000 * 1000);  
+  client.setTimeout(5000 * 1000)
 
-  client.write('Hi!\n');  
-  clientList.push(client);  
+  client.on('data', function(data){
+    let message = data.toString()
+    message = JSON.parse(message)
+    console.log(message)
+    switch(message.channel){
+      case 'online':
+        deviceOnline(client, message)
+        break
+      default:
+        //TODO: do sth
+    }
+  })
 
-  client.on('data', function(data){  
-    console.log(data.toString());
-      // broadcast(data, client);  
-  });  
-
-  client.on('end', function(){  
-      clientList.splice(clientList.indexOf(client), 1);  
-  });  
+  client.on('end', function(){
+    console.log('onEnd')
+    deviceOffline(client)
+  })
 
   client.on('close', function() {  
-      console.log('close:' + client.name);  
-  });  
+    console.log('onClose')
+    deviceOffline(client)
+  }) 
 
   client.on('timeout',function(){  
-      client.end();  
+    console.log('onTimeout')
+    deviceOffline(client)
   })  
 
-  client.on('error', function(error) {  
-    
-      console.log('onError', error);  
-  });  
+  client.on('error', function(error) {
+    console.log('onError')
+    deviceOffline(client)
+  })  
 })
 
 export default {
   bind: (fpm) => {
-    SERVER.listen(PORT, HOST)
     fpm.registerAction('BEFORE_SERVER_START', () => {
-      fpm._socketServer = SERVER
-      fpm._socketClients = clientList
+      const config = fpm.getConfig('socket') || {
+        port: 10000,
+        host: '127.0.0.1'
+      }
+      const HOST = config.host || 'localhost'
+      const PORT = config.port || 10000
+      SERVER.listen(PORT, HOST)
+      // fpm._socketServer = SERVER
+      // fpm._socketClients = clientList
 
       
       setInterval(function(){
-        console.log(clientList.length);
-        clientList.map((item) => {
-          item.write('Hi!\n' + _.now());
+        console.log('Clients:', _.keys(clients))
+        const NOW = _.now()
+        _.map(clients, (item) => {
+          let data = {
+            time: NOW,
+            channel: 'heartbeat'
+          }
+          sendData(item, data)
         })
-      }, 10000);
+      }, 5000);
     })
   }
 }

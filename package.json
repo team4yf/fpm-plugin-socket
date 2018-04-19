@@ -1,12 +1,12 @@
 {
   "name": "fpm-plugin-socket",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "FPM socket plugin",
   "main": "lib/index.js",
   "scripts": {
     "compile": "babel -d lib/ src/",
     "prepublish": "npm run compile",
-    "test": "node test/test.babel.js"
+    "dev": "./node_modules/.bin/nodemon test/test.babel.js"
   },
   "keywords": [
     "socket"
@@ -28,6 +28,7 @@
     "babel-preset-stage-2": "^6.13.0",
     "babel-register": "^6.14.0",
     "babel-runtime": "^6.0.0",
+    "nodemon": "^1.11.0",
     "chai": "^3.5.0",
     "mocha": "^3.2.0",
     "yf-fpm-client-nodejs": "^1.0.11",
