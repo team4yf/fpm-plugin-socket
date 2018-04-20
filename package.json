@@ -1,18 +1,15 @@
 {
-  "name": "fpm-plugin-socketio",
-  "version": "0.0.4",
-  "description": "FPM meets websocket connected socket",
+  "name": "fpm-plugin-socket",
+  "version": "0.0.7",
+  "description": "FPM socket plugin",
   "main": "lib/index.js",
   "scripts": {
     "compile": "babel -d lib/ src/",
     "prepublish": "npm run compile",
-    "test": "node test/test.babel.js"
+    "dev": "./node_modules/.bin/nodemon test/test.babel.js"
   },
   "keywords": [
-    "koa",
-    "koa v2",
-    "web sockets",
-    "websocket"
+    "socket"
   ],
   "engines": {
     "node": ">= 4"
@@ -20,7 +17,7 @@
   "author": "YFsoftcom",
   "license": "MIT",
   "dependencies": {
-    "koa-socket": "^4.4.0",
+    "bluebird": "^3.5.1",
     "lodash": "^4.17.4"
   },
   "devDependencies": {
@@ -32,8 +29,10 @@
     "babel-preset-stage-2": "^6.13.0",
     "babel-register": "^6.14.0",
     "babel-runtime": "^6.0.0",
-    "should": "^11.2.1",
+    "chai": "^3.5.0",
+    "mocha": "^3.2.0",
+    "nodemon": "^1.11.0",
     "yf-fpm-client-nodejs": "^1.0.11",
-    "yf-fpm-server": "^2.2.4"
+    "yf-fpm-server": "^2.2.21"
   }
 }

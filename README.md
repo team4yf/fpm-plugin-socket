@@ -1,2 +1,3 @@
-# fpm-plugin-socketio
-the socketio plugin for fpm
+# fpm-plugin-socket
+
+用于socket通信的插件

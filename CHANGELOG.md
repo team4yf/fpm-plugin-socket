@@ -1,11 +1,28 @@
-## 0.0.4 (2017-07-03)
+## 0.0.7 (2018-04-20)
 
 Feature
 
-- publish the message data from socketio server
+- Add Api
+ 向fpm核心对象添加一个 `_socketServer` socket的服务端, `_socketClients` socket的客户端列表
+  - `setDataDecoder(decoder) -> Src -> Object/String` 用于转换网络接收到的数据
+  - `setDataEncoder(encoder) -> Src -> String` 用于转换网络发送的数据
+  - `bindConnectEvent(fn)` 绑定客户端连接事件的函数
+  - `bindTimeoutEvent(fn)` 绑定客户端超时事件的函数
+  - `bindCloseEvent(fn)`   绑定客户端关闭事件的函数
+  - `bindErrorEvent(fn)`   绑定客户端异常事件的函数
+  - `broadcast(message, channel)`  广播消息,渠道可选
+  - `send(message, clientId)` 给指定的客户端发送消息
 
-## 0.0.3 (2017-04-21)
+- Add Depedent
+  - `bluebird`
+
+## 0.0.1 (2018-04-19)
 
 Feature
 
-- add `websocket.broadcast` api
+- Socket Server 
+
+Bugs
+
+- Change `localhost` to `0.0.0.0`
+- Add output Offline Client Id
