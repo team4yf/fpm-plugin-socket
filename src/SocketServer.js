@@ -2,6 +2,7 @@
 import _ from 'lodash'
 import net from 'net'
 import Promise from 'bluebird'
+import { SocketClient } from './SocketClient'
 
 const voidFunc = () =>{
     // do nothing here
@@ -35,27 +36,19 @@ class SocketServer{
         }
     }
 
-    deviceOnline(client, id){
-        client.id = id
-        this._clients[ id ] = client
+    deviceOnline(socketClient, id){
+        socketClient.online(id)
+        this._clients[ id ] = socketClient
+        return id
     }
 
-    deviceOffline(client){
-        if(client.id){
-            if(!_.has(this._clients, client.id)){
+    deviceOffline(socketClient){
+        if(socketClient.isOnline()){
+            if(!_.has(this._clients, socketClient.getId())){
               return
             }
-            delete this._clients[ client.id ]   
-        }else{
-            console.log('No Client Id')
+            delete this._clients[ socketClient.getId() ]
         }
-    }
-
-    writeData(client, data){
-        if(_.isPlainObject(data)){
-            data = JSON.stringify(data)
-        }
-        client.write(data)
     }
 
     sendMessage(id, message){
@@ -64,7 +57,7 @@ class SocketServer{
             if(!_.has(self._clients, id)){
                 rj(-1001)
             }else{
-                self.writeData(_clients[id], message)
+                _clients[id].sendData(message)
                 rs(1)
             }
         })
@@ -130,7 +123,7 @@ class SocketServer{
         if(!channel){
             // Send To All Clients
             _.map(this._clients, (client) => {
-                self.writeData(client, data)
+                client.sendData(data)
             })
         }else{
             //broadcast with channel
@@ -149,7 +142,7 @@ class SocketServer{
         data = _.assign({
             time: NOW
         }, data)
-        this.writeData(client, data)
+        client.sendData(data)
     }
 
     /* Socket Start/Shutdown */
@@ -160,6 +153,7 @@ class SocketServer{
         
         self.getEventHandler('connect')(client)
 
+        const socketClient = new SocketClient(client)
         // Receive Data From Client
         client.on('data', (data) => {
             // decode the network data
@@ -169,7 +163,7 @@ class SocketServer{
             }
             switch(message.channel){
                 case 'online':
-                    self.deviceOnline(client, message.id || _.now())
+                    self.deviceOnline(socketClient, message.id || _.now())
                     break
                 default:
                     //Do sth
@@ -179,23 +173,23 @@ class SocketServer{
         })
 
         client.on('end', () =>{
-            self.deviceOffline(client)
-            self.getEventHandler('close')(client)
+            self.deviceOffline(socketClient)
+            self.getEventHandler('close')(socketClient)
         })
     
         client.on('close', () =>{
-            self.deviceOffline(client)
-            self.getEventHandler('close')(client)
+            self.deviceOffline(socketClient)
+            self.getEventHandler('close')(socketClient)
         })
     
         client.on('timeout', () =>{
-            self.deviceOffline(client)
-            self.getEventHandler('timeout')(client)
+            self.deviceOffline(socketClient)
+            self.getEventHandler('timeout')(socketClient)
         })
     
         client.on('error', (error) =>{
-            self.deviceOffline(client)
-            self.getEventHandler('error')(error, client)
+            self.deviceOffline(socketClient)
+            self.getEventHandler('error')(error, socketClient)
         })
 
     }

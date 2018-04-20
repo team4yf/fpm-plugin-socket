@@ -1,3 +1,10 @@
+## 0.0.8 (2018-04-20)
+
+Feature
+
+- Add SocketClient
+
+
 ## 0.0.7 (2018-04-20)
 
 Feature
