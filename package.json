@@ -1,6 +1,6 @@
 {
   "name": "fpm-plugin-socket",
-  "version": "0.0.5",
+  "version": "0.0.7",
   "description": "FPM socket plugin",
   "main": "lib/index.js",
   "scripts": {
@@ -17,6 +17,7 @@
   "author": "YFsoftcom",
   "license": "MIT",
   "dependencies": {
+    "bluebird": "^3.5.1",
     "lodash": "^4.17.4"
   },
   "devDependencies": {
@@ -28,9 +29,9 @@
     "babel-preset-stage-2": "^6.13.0",
     "babel-register": "^6.14.0",
     "babel-runtime": "^6.0.0",
-    "nodemon": "^1.11.0",
     "chai": "^3.5.0",
     "mocha": "^3.2.0",
+    "nodemon": "^1.11.0",
     "yf-fpm-client-nodejs": "^1.0.11",
     "yf-fpm-server": "^2.2.21"
   }

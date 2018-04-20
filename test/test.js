@@ -13,4 +13,24 @@ biz.addSubModules('test',{
 })
 app.addBizModules(biz);
 
+// this plugin should run when INIT , but we cant run it in Dev Mode, so We should Run It Manually
+app.runAction('INIT', app)
+const socketServer = app._socketServer
+
+socketServer.bindReceiveEvent((message) => {
+	console.log(message)
+})
+
+socketServer.start().then((message) => {
+	console.log(message)
+	setInterval(()=>{
+		socketServer.send({message: 'hi One!'}, 1)
+		socketServer.broadcast({message: 'hello'})
+	}, 2000)
+})
+
+
+
+
+
 app.run()

@@ -4,7 +4,7 @@ var _ = require('lodash');
 var LOCAL_HOST = '127.0.0.1';
 var PORT = 5001;
 
-var ID = _.now();
+var ID = 1 || _.now();
 
 var client = new net.Socket();
 
