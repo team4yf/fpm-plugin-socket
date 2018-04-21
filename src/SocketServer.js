@@ -15,7 +15,6 @@ class SocketServer{
             host: '0.0.0.0',
             port: 5001,
         }, options)
-        console.log(this._options)
         this._server = net.createServer()
         this._clients = {}
         this._events = {}
@@ -61,6 +60,10 @@ class SocketServer{
                 rs(1)
             }
         })
+    }
+
+    createClient(id){
+        return new SocketClient(undefined, id);
     }
 
     /* Event Defined */
@@ -126,8 +129,11 @@ class SocketServer{
                 client.sendData(data)
             })
         }else{
-            //broadcast with channel
-
+            _.map(this._clients, (client) => {
+                if(client.isInChannel(channel)){
+                    client.sendData(data)
+                }                
+            })
         }
     }
 
