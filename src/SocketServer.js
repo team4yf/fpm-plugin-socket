@@ -167,7 +167,7 @@ class SocketServer{
             if(!message){
                 return
             }
-            switch(message.channel){
+            switch(message.event){
                 case 'online':
                     self.deviceOnline(socketClient, message.id || _.now())
                     break

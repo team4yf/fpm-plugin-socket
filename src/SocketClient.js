@@ -18,6 +18,7 @@ class SocketClient{
         this._alias = DEFAULT_ALIAS
         this._channel = []
         this._extendData = {}
+        this._status = {}
     }
 
     isOnline(){
@@ -73,6 +74,18 @@ class SocketClient{
 
     getChannel(){
         return this._channel
+    }
+
+    changeStatus(k, v){
+        this._status[k] = v
+        return this
+    }
+
+    getStatus(k){
+        if(k){
+            return this._status[k]
+        }
+        return this._status
     }
 
     /**

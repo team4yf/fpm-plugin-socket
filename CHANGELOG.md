@@ -1,4 +1,4 @@
-## 0.0.9 (2018-04-21)
+## 0.0.10 (2018-04-21)
 
 Feature
 
@@ -9,9 +9,15 @@ Feature
   - `set/getTag`
   - `addChannel`
   - `getChannel`
-  - `isInChannel(channel:String/String[])` *TODO*
+  - `isInChannel(channel:String/String[])`
   - `set/getAlias`
   - `addExtendData(data:Object)`
+  - `changeStatus(k, v)`
+  - `getStatus(k)`
+
+Change
+
+- Change Receive Data.`channel` To Data.`event`
 
 ## 0.0.8 (2018-04-20)
 
