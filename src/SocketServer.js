@@ -113,11 +113,14 @@ class SocketServer{
     broadcast(message, channel){
         // do nothing when there is no client
         if(_.size(this._clients)<1){
-            return
+            return new Promise((rs, rj) => {
+                return rs(0)
+            })
         }
         const NOW = _.now()
         const self = this
         let data = this._encoder(message)
+        let count = 0
         data = _.assign({
             time: NOW,
             channel: channel || 'ALL'
@@ -127,19 +130,26 @@ class SocketServer{
             // Send To All Clients
             _.map(this._clients, (client) => {
                 client.sendData(data)
+                count++
             })
         }else{
             _.map(this._clients, (client) => {
                 if(client.isInChannel(channel)){
                     client.sendData(data)
+                    count ++
                 }                
             })
         }
+        return new Promise((rs, rj) => {
+            return rs(count)
+        })
     }
 
     send(message, clientId){
         if(!_.has(this._clients, clientId)){
-            return
+            return new Promise((rs, rj) => {
+                return rs(0)
+            })
         }
         const client = this._clients[clientId]
 
@@ -149,6 +159,10 @@ class SocketServer{
             time: NOW
         }, data)
         client.sendData(data)
+
+        return new Promise((rs, rj) => {
+            return rs(1)
+        })
     }
 
     /* Socket Start/Shutdown */
