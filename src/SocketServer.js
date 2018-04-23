@@ -192,10 +192,11 @@ class SocketServer{
             self.getEventHandler('receive')(message)
         })
 
-        client.on('end', () =>{
-            self.deviceOffline(socketClient)
-            self.getEventHandler('close')(socketClient)
-        })
+        // Do Not Need This Event
+        // client.on('end', () =>{
+        //     self.deviceOffline(socketClient)
+        //     self.getEventHandler('close')(socketClient)            
+        // })
     
         client.on('close', () =>{
             self.deviceOffline(socketClient)

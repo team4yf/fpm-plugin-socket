@@ -1,7 +1,8 @@
-## 0.0.11 (2018-04-23)
+## 0.0.12 (2018-04-23)
 
 Feature
   - change `send()` and `broadcast()` Return Promise
+  - remove `Client.OnEnd` Event
 
 ## 0.0.10 (2018-04-21)
 
