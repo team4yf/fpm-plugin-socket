@@ -1,7 +1,6 @@
 "use strict";
 import _ from 'lodash'
 import net from 'net'
-import Promise from 'bluebird'
 import { SocketClient } from './SocketClient'
 
 const voidFunc = () =>{
@@ -15,7 +14,7 @@ class SocketServer{
             host: '0.0.0.0',
             port: 5001,
         }, options)
-        this._server = net.createServer()
+        
         this._clients = {}
         this._events = {}
         this._encoder = (src) => {
@@ -113,9 +112,7 @@ class SocketServer{
     broadcast(message, channel){
         // do nothing when there is no client
         if(_.size(this._clients)<1){
-            return new Promise((rs, rj) => {
-                return rs(0)
-            })
+            return Promise.resolve(0)
         }
         const NOW = _.now()
         const self = this
@@ -140,16 +137,12 @@ class SocketServer{
                 }                
             })
         }
-        return new Promise((rs, rj) => {
-            return rs(count)
-        })
+        return Promise.resolve(count)
     }
 
     send(message, clientId){
         if(!_.has(this._clients, clientId)){
-            return new Promise((rs, rj) => {
-                return rs(0)
-            })
+            return Promise.resolve(0)
         }
         const client = this._clients[clientId]
 
@@ -160,9 +153,7 @@ class SocketServer{
         }, data)
         client.sendData(data)
 
-        return new Promise((rs, rj) => {
-            return rs(1)
-        })
+        return Promise.resolve(1)
     }
 
     /* Socket Start/Shutdown */
@@ -219,7 +210,9 @@ class SocketServer{
         this._server.on('connection', this.connectionEvent.bind(this))
     }
 
-    start(){
+    start(options){
+        this._options = _.assign(this._options, options)
+        this._server = net.createServer()
         this.init()
         const self = this
         return new Promise((rs, rj) => {

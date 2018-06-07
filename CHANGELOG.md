@@ -1,3 +1,9 @@
+## 1.0.0 (2018-06-07)
+
+Modify:
+- Remove All Bind Function, Use Publish To Transform Data
+- 
+
 ## 0.0.12 (2018-04-23)
 
 Feature
