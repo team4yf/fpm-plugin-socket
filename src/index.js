@@ -3,10 +3,14 @@ import _ from 'lodash'
 import net from 'net'
 import { SocketServer } from './SocketServer'
 
-export default {
-  bind: (fpm) => {
-    const socketServer = new SocketServer()
+let socketServer
 
+export default {
+  getServer: () =>{
+    return socketServer
+  },
+  bind: (fpm) => {   
+    socketServer = new SocketServer()
     /**
      * bind events to socketServer
      */

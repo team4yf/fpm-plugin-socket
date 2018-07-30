@@ -23,14 +23,7 @@ class SocketServer{
 
         const self = this
         this._decoder = (data) => {
-            let message = data.toString()
-            try{
-                message = JSON.parse(message)
-                return message
-            }catch(e){
-                self.getEventHandler('decode.error')('Ops, Origin Message:' + message)
-                return undefined
-            }
+            return { id: data.id || _.now(), data }
         }
     }
 
@@ -100,7 +93,7 @@ class SocketServer{
     }
 
     setDataDecoder(fn){
-        this._encoder = fn
+        this._decoder = fn
     }
 
     setDataEncoder(fn){
@@ -118,11 +111,6 @@ class SocketServer{
         const self = this
         let data = this._encoder(message)
         let count = 0
-        data = _.assign({
-            time: NOW,
-            channel: channel || 'ALL'
-        }, data)
-
         if(!channel){
             // Send To All Clients
             _.map(this._clients, (client) => {
@@ -145,12 +133,7 @@ class SocketServer{
             return Promise.resolve(0)
         }
         const client = this._clients[clientId]
-
-        const NOW = _.now()
         let data = this._encoder(message)
-        data = _.assign({
-            time: NOW
-        }, data)
         client.sendData(data)
 
         return Promise.resolve(1)
@@ -165,6 +148,7 @@ class SocketServer{
         self.getEventHandler('connect')(client)
 
         const socketClient = new SocketClient(client)
+
         // Receive Data From Client
         client.on('data', (data) => {
             // decode the network data
@@ -172,22 +156,10 @@ class SocketServer{
             if(!message){
                 return
             }
-            switch(message.event){
-                case 'online':
-                    self.deviceOnline(socketClient, message.id || _.now())
-                    break
-                default:
-                    //Do sth
-            }
+            self.deviceOnline(socketClient, message.id || _.now())
             // handle the message
-            self.getEventHandler('receive')(message)
+            self.getEventHandler('receive')(message.data)
         })
-
-        // Do Not Need This Event
-        // client.on('end', () =>{
-        //     self.deviceOffline(socketClient)
-        //     self.getEventHandler('close')(socketClient)            
-        // })
     
         client.on('close', () =>{
             self.deviceOffline(socketClient)

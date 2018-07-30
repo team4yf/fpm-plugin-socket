@@ -16,6 +16,25 @@
   - [ ] `getOnlineDevice`
 
 ## Usage
+- SetEncoder/SetDecoder
+
+  - setDataDecoder
+    it must be return a Object{id, data}, and so some crc16 compare, return undefined if crc16 error
+    
+    ```javascript
+    socketServer.setDataDecoder((src) => {
+    
+      let data = _.dropRight(src, 2)
+      data = new Buffer(data, 'hex')
+
+      let id = new Buffer(_.take(data, 2), 'hex').join('-')
+      console.info(id)
+      return {id, data}
+    })
+    ```
+  - setDataEncoder
+    do crc16 encode
+
 - Broadcast message
 
   `fpm.execute('socket.broadcast', message!Object) => Promise`
