@@ -1,4 +1,4 @@
-## 1.0.0 (2018-06-07)
+## 1.0.2 (2018-06-07)
 Modify:
 - Change `receive` Handler. `fpm.publish('#socket/receive', message)` the message include `id` & `data` fields
 

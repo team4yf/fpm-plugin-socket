@@ -8,6 +8,7 @@ Transform with byte array like hex.
 
 Support `CRC16` data compare.
 
+
 ## Basic Info
 - Run Action Hook Name: `BEFORE_SERVER_START`
 - ExtendModule Name: `socket`
