@@ -1,6 +1,12 @@
 # fpm-plugin-socket
 
-用于socket通信的插件
+A plugin for Socket, It's only for a few datas( Normally < 20 bytes ). 
+
+We use it to build IOT project.
+
+Transform with byte array like hex.
+
+Support `CRC16` data compare.
 
 ## Basic Info
 - Run Action Hook Name: `BEFORE_SERVER_START`
@@ -19,16 +25,15 @@
 - SetEncoder/SetDecoder
 
   - setDataDecoder
-    it must be return a Object{id, data}, and so some crc16 compare, return undefined if crc16 error
+    it must be return a Object{id, data}, and some crc16 compare, return `undefined` if crc16 error
     
     ```javascript
     socketServer.setDataDecoder((src) => {
-    
+      // the last 2 bytes is the crc16 data
       let data = _.dropRight(src, 2)
-      data = new Buffer(data, 'hex')
+      data = Buffer.from(data, 'hex')
 
-      let id = new Buffer(_.take(data, 2), 'hex').join('-')
-      console.info(id)
+      let id = Buffer.from(_.take(data, 2), 'hex').toString('hex')
       return {id, data}
     })
     ```
@@ -42,8 +47,8 @@
 
 - Send message to The client
 
-  `fpm.execute('socket.send', message!Object) => Promise`
-  - it always return a resolved Promise with the counter of success broadcast messages
+  `fpm.execute('socket.send', message!Object, clientId!String) => Promise`
+  - it always return a resolved Promise with the counter of success send messages
 
 - getOnlineDevice
 

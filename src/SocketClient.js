@@ -142,7 +142,7 @@ class SocketClient{
         if(!this.isOnline()){
             return this
         }            
-        // WARNING: Only Support JSON/String In Version 1.x.x
+        // WARNING: Only Support JSON/String/Buffer In Version 1.x.x
         if(_.isPlainObject(data)){
             data = JSON.stringify(data)
         }

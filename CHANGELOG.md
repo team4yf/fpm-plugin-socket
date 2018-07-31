@@ -1,4 +1,8 @@
 ## 1.0.0 (2018-06-07)
+Modify:
+- Change `receive` Handler. `fpm.publish('#socket/receive', message)` the message include `id` & `data` fields
+
+## 1.0.0 (2018-06-07)
 
 Modify:
 - Remove All Bind Function, Use Publish To Transform Data

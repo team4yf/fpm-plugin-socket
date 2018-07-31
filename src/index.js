@@ -19,7 +19,8 @@ export default {
     })
 
     socketServer.bindConnectEvent((client) => {
-        fpm.publish('#socket/connect', {})
+        // No device info, so we cannt use it todo anything.
+        // fpm.publish('#socket/connect', {})
     })
 
     socketServer.bindDecodeErrorEvent((message)=>{

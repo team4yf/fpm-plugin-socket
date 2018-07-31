@@ -135,7 +135,6 @@ class SocketServer{
         const client = this._clients[clientId]
         let data = this._encoder(message)
         client.sendData(data)
-
         return Promise.resolve(1)
     }
 
@@ -158,7 +157,7 @@ class SocketServer{
             }
             self.deviceOnline(socketClient, message.id || _.now())
             // handle the message
-            self.getEventHandler('receive')(message.data)
+            self.getEventHandler('receive')(message)
         })
     
         client.on('close', () =>{
