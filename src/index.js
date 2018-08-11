@@ -44,7 +44,7 @@ export default {
           const data = await socketServer.send(args.id, args.message)
           return { data }
         }catch(e){
-          return { errno: -2001, message: e}
+          return Promise.reject({ errno: -2001, message: e})
         }
         
       },
