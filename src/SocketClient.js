@@ -138,16 +138,20 @@ class SocketClient{
         return this._client
     }
 
-    sendData(data){
+    sendData(data, cb){
+
         if(!this.isOnline()){
-            return this
+            cb && cb('offline')
+            return
         }            
-        // WARNING: Only Support JSON/String/Buffer In Version 1.x.x
-        if(_.isPlainObject(data)){
-            data = JSON.stringify(data)
+        // WARNING: Only Support Buffer In Version 1.x.x
+        if(!Buffer.isBuffer(data)){
+            cb && cb('data should be Buffer')
+            return
         }
-        this._client.write(data)
-        return this
+        this._client.write(data, () => {
+            cb && cb()
+        })
     }
 }
 

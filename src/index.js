@@ -40,7 +40,10 @@ export default {
           return socketServer.broadcast(args.message, args.channel)
       },
       send: async (args) => {
-        return socketServer.send(args.message, args.clientId)
+        return socketServer.send(args.id, args.message)
+      },
+      isOnline: async args => {
+        return _.has(socketServer._clients, args.id)? 1 : 0
       },
       getOnlineDevice: async (args) =>{
           const clients = _.values(socketServer._clients)

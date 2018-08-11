@@ -6,7 +6,7 @@ We use it to build IOT project.
 
 Transform with byte array like hex.
 
-Support `CRC16` data compare.
+~Support `CRC16` data compare.~
 
 
 ## Basic Info
@@ -17,10 +17,11 @@ Support `CRC16` data compare.
 - `getDependencies()`
   - [x] `[]`
 - The Reference Of The `Bind()` Method
-  An BizModule Object Contains 3 Functions
+  An BizModule Object Contains those Functions
   - [ ] `broadcast`
   - [ ] `send`
   - [ ] `getOnlineDevice`
+  - [ ] `isOnline`
 
 ## Usage
 - SetEncoder/SetDecoder
@@ -39,22 +40,28 @@ Support `CRC16` data compare.
     })
     ```
   - setDataEncoder
-    do crc16 encode
+    
+    Make sure return an Buffer Object
 
 - Broadcast message
 
-  `fpm.execute('socket.broadcast', message!Object) => Promise`
+  `fpm.execute('socket.broadcast', message!Object, channel?Array) => Promise`
   - it always return a resolved Promise with the counter of success broadcast messages
 
 - Send message to The client
 
-  `fpm.execute('socket.send', message!Object, clientId!String) => Promise`
-  - it always return a resolved Promise with the counter of success send messages
+  `fpm.execute('socket.send', id!String, message!HexString) => Promise`
+  - it return an reject if send error
 
 - getOnlineDevice
 
   `fpm.execute('socket.getOnlineDevice', message!Object) => Promise`
   - it returns the online devices
+
+- isOnline
+
+  `fpm.execute('socket.isOnline', id!String) => Promise`
+  - it returns device which use the id is online
 
 - Subscribe Event To Receive Message 
   - [ ] `##socket/receive`

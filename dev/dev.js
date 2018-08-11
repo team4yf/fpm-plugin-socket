@@ -21,6 +21,9 @@ socketServer.setDataDecoder((src) => {
 	console.info('setDataDecoder, get id:', id)
 	return {id, data}
 })
+socketServer.setDataEncoder((src) => {
+	return Buffer.from(src, 'hex')
+})
 // this plugin should run when INIT , but we cant run it in Dev Mode, so We should Run It Manually
 app.runAction('INIT', app)
 

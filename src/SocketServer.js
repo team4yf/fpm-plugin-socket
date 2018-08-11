@@ -48,8 +48,13 @@ class SocketServer{
             if(!_.has(self._clients, id)){
                 rj(-1001)
             }else{
-                _clients[id].sendData(message)
-                rs(1)
+                _clients[id].sendData(message, (err) => {
+                    if(err){
+                        rj({message: err})
+                        return
+                    }
+                    rs(1)
+                })
             }
         })
     }
@@ -101,7 +106,7 @@ class SocketServer{
     }
 
     /* Send Data */
-
+    // this method should not make sure received
     broadcast(message, channel){
         // do nothing when there is no client
         if(_.size(this._clients)<1){
@@ -115,7 +120,7 @@ class SocketServer{
             // Send To All Clients
             _.map(this._clients, (client) => {
                 client.sendData(data)
-                count++
+                
             })
         }else{
             _.map(this._clients, (client) => {
@@ -128,14 +133,21 @@ class SocketServer{
         return Promise.resolve(count)
     }
 
-    send(message, clientId){
-        if(!_.has(this._clients, clientId)){
-            return Promise.resolve(0)
+    send(id, message){
+        if(!_.has(this._clients, id)){
+            return Promise.reject('offline')
         }
-        const client = this._clients[clientId]
+        const client = this._clients[id]
         let data = this._encoder(message)
-        client.sendData(data)
-        return Promise.resolve(1)
+        return new Promise( (rs, rj) => {
+            client.sendData(data, (err) =>{
+                if(err){
+                    rj(err)
+                }else{
+                    rs(1)
+                }
+            })
+        })
     }
 
     /* Socket Start/Shutdown */

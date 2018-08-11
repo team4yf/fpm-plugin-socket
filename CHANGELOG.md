@@ -1,3 +1,12 @@
+## 1.0.3 (2018-08-11)
+Add:
+- `isOnline` method
+
+Modify:
+- change `clientId` to `id`
+- change `socketServer.send(message, clientId)` to `socketServer.send(id, message)`
+- handle callback for data send 
+
 ## 1.0.2 (2018-06-07)
 Modify:
 - Change `receive` Handler. `fpm.publish('#socket/receive', message)` the message include `id` & `data` fields
