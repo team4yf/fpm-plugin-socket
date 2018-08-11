@@ -56,7 +56,7 @@ describe('Send Buffer Data', function(){
 
     it('sendData', function(done){
         var func = new YF.Func('socket.send');
-        func.invoke({id: '0102', message: '12121212'})
+        func.invoke({id: '01023', message: '12121212'})
           .then(function(d){
             console.info(d)
             done();

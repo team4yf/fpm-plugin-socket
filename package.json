@@ -1,6 +1,6 @@
 {
   "name": "fpm-plugin-socket",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "FPM socket plugin",
   "main": "lib/index.js",
   "scripts": {

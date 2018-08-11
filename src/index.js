@@ -40,7 +40,13 @@ export default {
           return socketServer.broadcast(args.message, args.channel)
       },
       send: async (args) => {
-        return socketServer.send(args.id, args.message)
+        try{
+          const data = await socketServer.send(args.id, args.message)
+          return { data }
+        }catch(e){
+          return { errno: -2001, message: e}
+        }
+        
       },
       isOnline: async args => {
         return _.has(socketServer._clients, args.id)? 1 : 0
