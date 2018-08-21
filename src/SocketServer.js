@@ -2,6 +2,7 @@
 import _ from 'lodash'
 import net from 'net'
 import { SocketClient } from './SocketClient'
+import Q from 'q'
 
 const voidFunc = () =>{
     // do nothing here
@@ -9,30 +10,38 @@ const voidFunc = () =>{
 
 class SocketServer{
     constructor(options){
+        // -- define the options
         this._options = _.assign({
             timeout: 500 * 1000,
             host: '0.0.0.0',
             port: 5001,
         }, options)
         
+        // -- the socket clients
         this._clients = {}
+
+        // -- the user defined events
         this._events = {}
+
+        // -- the callbacks for promise
+        this._callbacks = {}
+        // -- the data transform protocol
         this._encoder = (src) => {
             return src
         }
-
-        const self = this
         this._decoder = (data) => {
             return { id: data.id || _.now(), data }
         }
     }
 
+    // -- device online 
     deviceOnline(socketClient, id){
         socketClient.online(id)
         this._clients[ id ] = socketClient
         return id
     }
 
+    // -- device offline
     deviceOffline(socketClient){
         if(socketClient.isOnline()){
             if(!_.has(this._clients, socketClient.getId())){
@@ -40,23 +49,6 @@ class SocketServer{
             }
             delete this._clients[ socketClient.getId() ]
         }
-    }
-
-    sendMessage(id, message){
-        const self = this
-        return new Promise((rs, rj) => {
-            if(!_.has(self._clients, id)){
-                rj(-1001)
-            }else{
-                _clients[id].sendData(message, (err) => {
-                    if(err){
-                        rj({message: err})
-                        return
-                    }
-                    rs(1)
-                })
-            }
-        })
     }
 
     createClient(id){
@@ -113,7 +105,6 @@ class SocketServer{
             return Promise.resolve(0)
         }
         const NOW = _.now()
-        const self = this
         let data = this._encoder(message)
         let count = 0
         if(!channel){
@@ -133,12 +124,24 @@ class SocketServer{
         return Promise.resolve(count)
     }
 
-    send(id, message){
+    // -- * IMPORTANT: * this should be return promise include the device's return data
+    send(id, message, callbackId){
         if(!_.has(this._clients, id)){
             return Promise.reject('offline')
         }
         const client = this._clients[id]
         let data = this._encoder(message)
+        if(callbackId && callbackId != '0000'){
+            const deferred = Q.defer()
+            this._callbacks['' + callbackId] = deferred            
+            
+            client.sendData(data, (err) =>{
+                if(err){
+                    deferred.reject(err)
+                }
+            })
+            return deferred.promise
+        }
         return new Promise( (rs, rj) => {
             client.sendData(data, (err) =>{
                 if(err){
@@ -168,6 +171,14 @@ class SocketServer{
                 return
             }
             self.deviceOnline(socketClient, message.id || _.now())
+            if(message.callback){
+                const callbackId = '' + message.callback
+                if(_.has(this._callbacks, callbackId)){
+                    this._callbacks[callbackId].resolve(this._decoder(message.data))
+                    delete this._callbacks[callbackId]
+                }
+                return
+            }
             // handle the message
             self.getEventHandler('receive')(message)
         })

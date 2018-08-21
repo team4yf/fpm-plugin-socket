@@ -41,7 +41,7 @@ export default {
       },
       send: async (args) => {
         try{
-          const data = await socketServer.send(args.id, args.message)
+          const data = await socketServer.send(args.id, args.message, args.callback)
           return { data }
         }catch(e){
           return Promise.reject({ errno: -2001, message: e})

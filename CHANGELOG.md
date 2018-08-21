@@ -1,3 +1,10 @@
+## 1.0.4 (2018-08-21)
+Change:
+- Promisefy the `send` method
+  - Defined the `Callback` map
+  - Resolve the callback on `data` event
+  - The Encoder & Decoder method must parse the callback
+
 ## 1.0.3 (2018-08-11)
 Add:
 - `isOnline` method

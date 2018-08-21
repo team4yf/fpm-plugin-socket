@@ -1,6 +1,6 @@
 {
   "name": "fpm-plugin-socket",
-  "version": "1.0.5",
+  "version": "1.0.7",
   "description": "FPM socket plugin",
   "main": "lib/index.js",
   "scripts": {
@@ -15,7 +15,8 @@
   "author": "YFsoftcom",
   "license": "MIT",
   "dependencies": {
-    "lodash": "^4.17.4"
+    "lodash": "^4.17.4",
+    "q": "^1.5.1"
   },
   "devDependencies": {
     "babel-cli": "^6.22.2",

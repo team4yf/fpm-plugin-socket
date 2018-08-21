@@ -13,13 +13,18 @@ plugin.bind(app)
 const socketServer = plugin.getServer()
 
 socketServer.setDataDecoder((src) => {
+	let hex = src
 	
-	let data = _.dropRight(src, 2)
-	data = Buffer.from(data, 'hex')
+	let data = hex.slice(0, -2)
+	let crc16 = hex.slice(-2)
 
-	let id = Buffer.from(_.take(data, 2), 'hex').toString('hex')
-	console.info('setDataDecoder, get id:', id)
-	return {id, data}
+	let id = data.toString('hex', 0, 2)
+	let callback = data.toString('hex', 2, 4)
+	
+	if(callback === '0000'){
+		return { id, data }
+	}
+	return {id, data, callback: callback}
 })
 socketServer.setDataEncoder((src) => {
 	return Buffer.from(src, 'hex')
@@ -29,7 +34,6 @@ app.runAction('INIT', app)
 
 app.subscribe('#socket/receive', (topic, message) => {
 	console.info('#socket/receive', message)
-	socketServer.send(Buffer.from([0x02, 0x03, 0x04, 0x05, 0x21, 0x33], 'hex'), message.id)
 })
 
 app.subscribe('#socket/close', (topic, message) => {
