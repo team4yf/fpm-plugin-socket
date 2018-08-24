@@ -97,6 +97,10 @@ class SocketServer{
         this._encoder = fn
     }
 
+    setExtendFunction(fn){
+        this._extendFunction = fn
+    }
+
     /* Send Data */
     // this method should not make sure received
     broadcast(message, channel){
@@ -174,10 +178,15 @@ class SocketServer{
             if(message.callback){
                 const callbackId = '' + message.callback
                 if(_.has(this._callbacks, callbackId)){
-                    this._callbacks[callbackId].resolve(this._decoder(message.data))
+                    console.log('handle promise')
+                    if(_.isFunction(this._extendFunction)){
+                        this._callbacks[callbackId].resolve(this._extendFunction(message.data))    
+                    }else{
+                        this._callbacks[callbackId].resolve(message.data)
+                    }
                     delete this._callbacks[callbackId]
                 }
-                return
+                // return
             }
             // handle the message
             self.getEventHandler('receive')(message)
