@@ -29,6 +29,9 @@ socketServer.setDataDecoder((src) => {
 socketServer.setDataEncoder((src) => {
 	return Buffer.from(src, 'hex')
 })
+socketServer.setExtendFunction( src => {
+	return src.toString('hex');
+})
 // this plugin should run when INIT , but we cant run it in Dev Mode, so We should Run It Manually
 app.runAction('INIT', app)
 
@@ -38,6 +41,10 @@ app.subscribe('#socket/receive', (topic, message) => {
 
 app.subscribe('#socket/close', (topic, message) => {
 	console.info('#socket/close', message)
+})
+
+app.subscribe('#socket/connect', (topic, message) => {
+	console.info('#socket/connect', message)
 })
 
 app.run().then(() => {

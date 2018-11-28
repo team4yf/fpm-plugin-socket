@@ -36,8 +36,13 @@ class SocketServer{
 
     // -- device online 
     deviceOnline(socketClient, id){
+        // if this client reconnect, run connect event
+        if(socketClient.isOnline()){
+            return id;
+        }
         socketClient.online(id)
         this._clients[ id ] = socketClient
+        this.getEventHandler('connect')(socketClient);
         return id
     }
 
@@ -53,6 +58,27 @@ class SocketServer{
 
     createClient(id){
         return new SocketClient(undefined, id);
+    }
+
+    getClient(id){
+        return _clients[id];
+    }
+
+    addChannel(channel, ids){
+        let arr;
+        if(_.isString(ids)){
+            arr = ids.split(',');
+        }else if(_.isArray(ids)){
+            arr = ids;
+        }
+        return _.filter(arr, id => {
+            const c = this._clients[id];
+            if(c){
+                c.addChannel(channel)
+                return true;
+            }
+            return false;
+        }).join(',')
     }
 
     /* Event Defined */
@@ -103,29 +129,56 @@ class SocketServer{
 
     /* Send Data */
     // this method should not make sure received
-    broadcast(message, channel){
+    broadcast(message, channel, ids){
         // do nothing when there is no client
         if(_.size(this._clients)<1){
-            return Promise.resolve(0)
+            return 0;
         }
         const NOW = _.now()
         let data = this._encoder(message)
         let count = 0
-        if(!channel){
+        
+        let idArr, channelArr;
+        if( !ids ){
+            idArr = [];
+        }else if(_.isString(ids)){
+            idArr = ids.split(',');
+        }else if(_.isArray(ids)){
+            idArr = ids;
+        }
+
+        if( _.isString(channel) ){
+            channelArr = channel.split(',');
+        }else if( _.isArray(channel) ){
+            channelArr = channel;
+        }
+        
+        if(!channelArr){
             // Send To All Clients
             _.map(this._clients, (client) => {
-                client.sendData(data)
-                
+                client.sendData(data);
+                count ++;
             })
         }else{
             _.map(this._clients, (client) => {
-                if(client.isInChannel(channel)){
-                    client.sendData(data)
-                    count ++
+                if(client.isInChannel(channelArr)){
+                    client.sendData(data);
+                    count ++;
                 }                
             })
         }
-        return Promise.resolve(count)
+        _.map(idArr, id => {
+            const c = this._clients[id];
+            if(c){
+                if(c.isInChannel(channelArr)){
+                    // send in channel already
+                    return;
+                }
+                c.sendData(data);
+                count ++;
+            }
+        })
+        return count
     }
 
     // -- * IMPORTANT: * this should be return promise include the device's return data
@@ -162,8 +215,6 @@ class SocketServer{
     connectionEvent(client){
         const self = this
         client.setTimeout(this._options.timeout)
-        
-        self.getEventHandler('connect')(client)
 
         const socketClient = new SocketClient(client)
 
@@ -174,11 +225,11 @@ class SocketServer{
             if(!message){
                 return
             }
+            
             self.deviceOnline(socketClient, message.id || _.now())
             if(message.callback){
                 const callbackId = '' + message.callback
                 if(_.has(this._callbacks, callbackId)){
-                    console.log('handle promise')
                     if(_.isFunction(this._extendFunction)){
                         this._callbacks[callbackId].resolve(this._extendFunction(message.data))    
                     }else{

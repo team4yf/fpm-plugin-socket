@@ -1,6 +1,5 @@
 "use strict";
 import _ from 'lodash'
-import net from 'net'
 import { SocketServer } from './SocketServer'
 
 let socketServer
@@ -18,9 +17,9 @@ export default {
         fpm.publish('#socket/receive', message)
     })
 
-    socketServer.bindConnectEvent((client) => {
+    socketServer.bindConnectEvent((socketClient) => {
         // No device info, so we cannt use it todo anything.
-        // fpm.publish('#socket/connect', {})
+        fpm.publish('#socket/connect', socketClient.toJson())
     })
 
     socketServer.bindDecodeErrorEvent((message)=>{
@@ -37,7 +36,11 @@ export default {
 
     const bizModule = {
       broadcast: async (args) =>{
-          return socketServer.broadcast(args.message, args.channel)
+        const { message, channel, ids } = args;
+        return socketServer.broadcast(message, channel, ids)
+      },
+      addChannel: async args => {
+        return socketServer.addChannel(args.channel, args.ids);
       },
       send: async (args) => {
         try{
@@ -46,7 +49,6 @@ export default {
         }catch(e){
           return Promise.reject({ errno: -2001, message: e})
         }
-        
       },
       isOnline: async args => {
         return _.has(socketServer._clients, args.id)? 1 : 0
@@ -57,14 +59,14 @@ export default {
           const limit = args.limit || 10
           const skip = args.skip || 0
           const rows = _.take(_.drop(clients, skip), limit)
-          return Promise.resolve({ 
+          return { 
             data: {
               count, 
               rows: _.map(rows, (item) =>{
-                  return item.toJson()
+                return item.toJson()
               })
-            }  
-          });
+            }
+          };
       }
     }
     fpm.registerAction('BEFORE_SERVER_START', () => {

@@ -1,3 +1,15 @@
+## 1.0.9 (2018-11-27)
+Remove:
+- `yarn.lock`
+
+Change:
+- SocketServer
+  - Add `getClient(id)` Method
+  - Add `addChannel(channel!String, ids!Array)` Method
+    - this method returns the `addChannel` called by the online clients. 
+  - Add an argument `ids` for `broadcast` Method
+    - so, we can send message to the clients in the channels and in the ids.
+
 ## 1.0.4 (2018-08-21)
 Change:
 - Promisefy the `send` method

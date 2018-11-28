@@ -45,7 +45,7 @@ Transform with byte array like hex.
 
 - Broadcast message
 
-  `fpm.execute('socket.broadcast', message!Object, channel?Array) => Promise`
+  `fpm.execute('socket.broadcast', message!Object, channel?Array, ids?Array) => Array`
   - it always return a resolved Promise with the counter of success broadcast messages
 
 - Send message to The client
@@ -53,15 +53,25 @@ Transform with byte array like hex.
   `fpm.execute('socket.send', id!String, message!HexString) => Promise`
   - it return an reject if send error
 
+- Add channel for clients
+
+  `fpm.execute('socket.addChannel', channel!String, ids!Array) => Array`
+  - it return an array of addChannel success ok.
+
 - getOnlineDevice
 
-  `fpm.execute('socket.getOnlineDevice', message!Object) => Promise`
+  `fpm.execute('socket.getOnlineDevice', message!Object) => Object`
   - it returns the online devices
 
 - isOnline
 
-  `fpm.execute('socket.isOnline', id!String) => Promise`
-  - it returns device which use the id is online
+  `fpm.execute('socket.isOnline', id!String) => Number!0/1`
+  - it returns 1 which use the id is online
+
+- getClient
+
+  `fpm.execute('socket.getClient', id!String) => SocketClient`
+  - it returns socketClient of the online device with id
 
 - Subscribe Event To Receive Message 
   - [ ] `##socket/receive`
@@ -72,9 +82,18 @@ Transform with byte array like hex.
 	```
   - [ ] `#socket/connect`
     ```javascript
-	fpm.subscribe('#socket/connect', (topic) => {
-		console.info(topic)
-	})
+	fpm.subscribe('#socket/connect', (topic, message) => {
+		console.info(message);
+  })
+  /*
+  { id: '0102',
+  ip: '127.0.0.1',
+  port: 41510,
+  channel: [],
+  tag: 'UN_TAGED',
+  alias: 'UN_ALIAS',
+  extend: {} }
+  */
 	```
   - [ ] `#socket/decode/error`
     ```javascript
