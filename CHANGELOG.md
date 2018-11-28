@@ -9,7 +9,8 @@ Change:
     - this method returns the `addChannel` called by the online clients. 
   - Add an argument `ids` for `broadcast` Method
     - so, we can send message to the clients in the channels and in the ids.
-
+  - Add `#socket/connect` Event
+  
 ## 1.0.4 (2018-08-21)
 Change:
 - Promisefy the `send` method
