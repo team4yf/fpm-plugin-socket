@@ -47,10 +47,22 @@ class SocketServer{
     }
 
     // -- device offline
-    deviceOffline(socketClient){
+    deviceOffline(socketClient, force = false){
         if(socketClient.isOnline()){
             if(!_.has(this._clients, socketClient.getId())){
-              return
+              return;
+            }
+            if(socketClient.client == undefined){
+                socketClient = this._clients[socketClient.getId()]
+            }
+            // try to send data or get status of the client
+            if(!socketClient._client.destroyed){
+                // it's connecting, dont' drop the connect.
+                if(!force){
+                    return;
+                }
+                socketClient._client.destroy();
+                
             }
             delete this._clients[ socketClient.getId() ]
         }
@@ -61,7 +73,7 @@ class SocketServer{
     }
 
     getClient(id){
-        return _clients[id];
+        return this._clients[id];
     }
 
     addChannel(channel, ids){
@@ -244,17 +256,17 @@ class SocketServer{
         })
     
         client.on('close', () =>{
-            self.deviceOffline(socketClient)
+            self.deviceOffline(socketClient, true)
             self.getEventHandler('close')(socketClient)
         })
     
         client.on('timeout', () =>{
-            self.deviceOffline(socketClient)
+            self.deviceOffline(socketClient, true)
             self.getEventHandler('timeout')(socketClient)
         })
     
         client.on('error', (error) =>{
-            self.deviceOffline(socketClient)
+            self.deviceOffline(socketClient, true)
             self.getEventHandler('error')(error, socketClient)
         })
 

@@ -1,3 +1,10 @@
+## 1.0.10 (2018-12-4)
+Change:
+- SocketServer
+  - change `deviceOffline(socketClient, force = false)`
+    
+    Add `force` argument for it, it will not destory the connection if `force is false` and connection not be `destoryed` yet.
+    
 ## 1.0.9 (2018-11-27)
 Remove:
 - `yarn.lock`

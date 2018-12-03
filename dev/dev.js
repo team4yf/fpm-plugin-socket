@@ -37,10 +37,14 @@ app.runAction('INIT', app)
 
 app.subscribe('#socket/receive', (topic, message) => {
 	console.info('#socket/receive', message)
+	setTimeout( () => {
+		socketServer.deviceOffline(socketServer.createClient(message.id));
+	}, 2000)
 })
 
 app.subscribe('#socket/close', (topic, message) => {
 	console.info('#socket/close', message)
+	
 })
 
 app.subscribe('#socket/connect', (topic, message) => {
