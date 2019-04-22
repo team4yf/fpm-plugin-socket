@@ -1,8 +1,8 @@
 {
   "name": "fpm-plugin-socket",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "FPM socket plugin",
-  "main": "lib/index.js",
+  "main": "src/index.js",
   "scripts": {
     "dev": "./node_modules/.bin/nodemon dev/dev.js",
     "test": "./node_modules/.bin/mocha test/*.test.js"

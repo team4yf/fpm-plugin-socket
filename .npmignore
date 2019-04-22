@@ -1,2 +1,5 @@
 spec/
 *.log
+test/
+dev/
+lib/
