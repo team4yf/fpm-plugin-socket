@@ -1,5 +1,5 @@
 "use strict";
-import _ from 'lodash'
+const _ = require('lodash');
 
 const DEFAULT_TAG = 'UN_TAGED'
 const DEFAULT_ALIAS = 'UN_ALIAS'
@@ -155,4 +155,4 @@ class SocketClient{
     }
 }
 
-export { SocketClient }
+module.exports = { SocketClient }

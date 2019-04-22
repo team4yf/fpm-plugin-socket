@@ -1,8 +1,8 @@
 "use strict";
-import _ from 'lodash'
-import net from 'net'
-import { SocketClient } from './SocketClient'
-import Q from 'q'
+const _ = require('lodash');
+const net = require('net');
+const { SocketClient } = require('./SocketClient');
+const Q = require('q');
 
 const voidFunc = () =>{
     // do nothing here
@@ -193,7 +193,7 @@ class SocketServer{
         return count
     }
 
-    // -- * IMPORTANT: * this should be return promise include the device's return data
+    // -- * constANT: * this should be return promise include the device's return data
     send(id, message, callbackId){
         if(!_.has(this._clients, id)){
             return Promise.reject('offline')
@@ -291,4 +291,4 @@ class SocketServer{
 
 }
 
-export { SocketServer }
+module.exports = { SocketServer }

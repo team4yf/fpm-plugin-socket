@@ -1,10 +1,10 @@
 "use strict";
-import _ from 'lodash'
-import { SocketServer } from './SocketServer'
+const _ = require('lodash');
+const { SocketServer } = require('./SocketServer');
 
 let socketServer
 
-export default {
+module.exports = {
   getServer: () =>{
     return socketServer
   },
@@ -69,14 +69,14 @@ export default {
           };
       }
     }
-    fpm.registerAction('BEFORE_SERVER_START', () => {
+    fpm.registerAction('BEFORE_SERVER_START', async () => {
       fpm.extendModule('socket', bizModule) 
       const config = fpm.getConfig('socket') || {
         port: 5001,
         host: '0.0.0.0'
       }
       socketServer.start(config)
-    })
+    }, 10)
 
     return bizModule
   }
