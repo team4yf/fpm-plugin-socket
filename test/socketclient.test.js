@@ -1,18 +1,18 @@
-var should = require("chai").should();
-var SC = require('../lib/SocketClient.js').SocketClient;
+const assert = require('assert');
+var SC = require('../src/SocketClient.js').SocketClient;
 
 describe('SocketClient', function(){
   it('isInChannel 1', function(done){
     var sc = new SC();
     sc.addChannel('AREA_1');
-    sc.isInChannel(['AREA_1']).should.equal(true)
+    assert(sc.isInChannel(['AREA_1']), 'fail')
     done();
   })
 
   it('isInChannel 2', function(done){
     var sc = new SC();
     sc.addChannel([ 'AREA_1', 'AREA_2' ]);
-    sc.isInChannel(['AREA_2']).should.equal(true)
+    assert(sc.isInChannel(['AREA_2']), 'fail')
     done();
   })
 
@@ -21,7 +21,7 @@ describe('SocketClient', function(){
     sc.addChannel('AREA_1');
     sc.addChannel('AREA_2');
     sc.addChannel( [ 'AREA_3' ]);
-    sc.isInChannel(['AREA_4']).should.equal(false)
+    assert(!sc.isInChannel(['AREA_4']), 'fail')
     done();
   })
 

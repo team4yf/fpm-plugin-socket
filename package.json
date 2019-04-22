@@ -1,13 +1,11 @@
 {
   "name": "fpm-plugin-socket",
-  "version": "1.0.10",
+  "version": "1.1.0",
   "description": "FPM socket plugin",
   "main": "lib/index.js",
   "scripts": {
-    "compile": "./node_modules/.bin/babel -d lib/ src/",
-    "prepublishOnly": "npm run compile",
-    "dev": "./node_modules/.bin/nodemon dev/dev.babel.js",
-    "test": "npm run compile && ./node_modules/.bin/mocha test/*.test.js"
+    "dev": "./node_modules/.bin/nodemon dev/dev.js",
+    "test": "./node_modules/.bin/mocha test/*.test.js"
   },
   "keywords": [
     "socket"

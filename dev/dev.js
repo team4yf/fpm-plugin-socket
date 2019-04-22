@@ -1,7 +1,7 @@
 'use strict';
-import { Fpm, Biz } from 'yf-fpm-server'
-import plugin from '../src'
-import _ from 'lodash'
+const { Fpm, Biz } = require('yf-fpm-server');
+const plugin = require('../src')
+const _ = require('lodash');
 
 let app = new Fpm()
 

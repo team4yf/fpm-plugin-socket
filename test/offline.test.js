@@ -1,12 +1,11 @@
+const { init, Func } = require("fpmc-jssdk");
 const assert = require('assert');
-const { init, Func } = require("yf-fpm-client-js").default;
+init({ appkey:'123123', masterKey:'123123', endpoint: 'http://localhost:9999/api' });
 const net = require('net');
 
 const LOCAL_HOST = 'localhost', PORT = 5001;
 
 const client = new net.Socket();
-
-init({ appkey:'123123', masterKey:'123', domain: 'http://localhost:9999' });
 
 describe('Offline Test', function(){
   before(function(done) {
